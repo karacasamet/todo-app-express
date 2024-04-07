@@ -1,0 +1,33 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id        String   @id @default(uuid())
+  createdAt DateTime @default(now())
+  username  String   @unique
+  password  String
+  todos     Todo[]
+}
+
+model Todo {
+  id        String        @id @default(uuid()) @unique
+  createdAt DateTime      @default(now())
+  title     String
+  done      Boolean       @default(false)
+  priority  TODO_PRIORITY @default(MEDIUM)
+  userId    String
+  user      User          @relation(fields: [userId], references: [id])
+  @@unique([userId, id])
+}
+
+enum TODO_PRIORITY {
+  LOW
+  MEDIUM
+  HIGH
+}
